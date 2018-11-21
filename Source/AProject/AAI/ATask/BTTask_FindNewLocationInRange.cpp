@@ -6,7 +6,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "AI/Navigation/NavigationSystem.h"
+#include "NavigationSystem.h"
 #include "AAPawn.h"
 #include "AAIController.h"
 
@@ -24,7 +24,7 @@ EBTNodeResult::Type UBTTask_FindNewLocationInRange::ExecuteTask(UBehaviorTreeCom
 		//FVector MoveLocation =  World->GetNavigationSystem()->GetRandomReachablePointInRadius(World,;
 		FVector Orgin = AIController->GetPawn()->GetActorLocation();
 		FNavLocation Output;
-		if (World->GetNavigationSystem()->GetRandomReachablePointInRadius(Orgin, Distance, Output, nullptr, nullptr))
+		if (FNavigationSystem::GetCurrent<UNavigationSystemV1>(World)->GetRandomReachablePointInRadius(Orgin, Distance, Output, nullptr, nullptr))
 		{
 			FVector MoveLocation = Output.Location;
 			MoveLocation.Z = 0;

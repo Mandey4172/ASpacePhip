@@ -2,27 +2,20 @@
 
 #pragma once
 
-#include "Core.h"
-#include "Engine.h"
+#include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_FindNewLocationInRange.generated.h"
+#include "BTTask_UseBaseSkillOnTarget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class APROJECT_API UBTTask_FindNewLocationInRange : public UBTTask_BlackboardBase
+class APROJECT_API UBTTask_UseBaseSkillOnTarget : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+	
 public:
 
-	UBTTask_FindNewLocationInRange();
-
 	virtual EBTNodeResult::Type ExecuteTask(class UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-
-protected:
-
-	UPROPERTY(EditAnywhere)
-	float Distance;
 
 };

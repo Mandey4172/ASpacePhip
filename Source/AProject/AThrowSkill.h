@@ -23,8 +23,7 @@ public:
 
 protected:
 
-	UFUNCTION(BlueprintCallable)
-	virtual bool OnUse(class AAAPawn * Pawn) override;
+	bool OnUse(class AAAPawn * Pawn) override;
 
 	UPROPERTY(EditAnywhere)
 	FVector SkillOffset;

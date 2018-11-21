@@ -11,6 +11,11 @@
 // Sets default values
 AAAEnemyPawn::AAAEnemyPawn()
 {
+	PawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Pawn Movement"));
+
+	BoxCollisionComponent->SetSimulatePhysics(true);
+	BoxCollisionComponent->SetLockedAxis(EDOFMode::XYPlane);
+
 	BlackboardAsset = NewObject<UBlackboardData>();
 	BehaviorTreeAsset = NewObject<UBehaviorTree>();
 	BehaviorTreeAsset->BlackboardAsset = BlackboardAsset;
