@@ -20,7 +20,7 @@ EBTNodeResult::Type UBTTask_MoveToEnemy::ExecuteTask(UBehaviorTreeComponent & Ow
 	AAAPawn *Enemy = Cast<AAAPawn>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(AIController->TargetKeyID));
 	if (Enemy)
 	{
-		AIController->MoveToActor(Enemy, Distance, true, true, false, 0, false);
+ 		AIController->MoveToActor(Enemy, Distance, true, true, false, 0, false);
 		if (AIController->GetPawn())
 		{
 			FVector ADist = Enemy->GetActorLocation() - AIController->GetPawn()->GetActorLocation();

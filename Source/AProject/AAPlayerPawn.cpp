@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AAPlayerPawn.h"
-#include "AAProjectile.h"
+#include "Skills/ADamageable.h"
+#include "AAEnemyPawn.h"
 
 const FName AAAPlayerPawn::MoveForwardBinding("MoveForward");
 const FName AAAPlayerPawn::MoveRightBinding("MoveRight");
@@ -27,8 +28,8 @@ void AAAPlayerPawn::Tick(float DeltaTime)
 	// Calculate  movement
 	const FVector Movement = MoveDirection * MoveSpeed * DeltaTime;
 
-	// If non-zero size, move this actor
-	if (Movement.SizeSquared() > 0.0f)
+	// If movement vector isn't zero, move this actor
+	if (!Movement.IsNearlyZero())
 	{
 		const FRotator NewRotation = GetActorRotation();
 		FHitResult Hit(1.f);
@@ -46,7 +47,7 @@ void AAAPlayerPawn::Tick(float DeltaTime)
 	const float FireForwardValue = GetInputAxisValue(FireForwardBinding);
 	const float FireRightValue = GetInputAxisValue(FireRightBinding);
 	FireDirection = FVector(FireForwardValue, FireRightValue, 0.f).GetClampedToMaxSize(1.0f);
-	if (FireDirection != FVector::ZeroVector)
+	if (!FireDirection.IsNearlyZero())
 	{
 		SetActorRotation(FireDirection.Rotation());
 		// Try and fire a shot
@@ -56,29 +57,45 @@ void AAAPlayerPawn::Tick(float DeltaTime)
 
 void AAAPlayerPawn::BeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	AAAProjectile * Projectile = Cast<AAAProjectile>(OtherActor);
-	if (Projectile)
-	{
-		if (Projectile->GetInstigator() != this)
-		{
-			FDamageEvent DamageEvent;
-			TakeDamage(Projectile->GetDamage(), DamageEvent,nullptr, Projectile->GetOwner());
-		}
-	}
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overleap!"));
+	//IADamageable * Damageable = Cast<IADamageable>(OtherActor);
+	//if (Damageable)
+	//{
+	//	AAAEnemyPawn * Enemy = Cast<AAAEnemyPawn>(OtherActor->GetInstigator());
+	//	if (Enemy)
+	//	{
+	//		FDamageEvent DamageEvent;
+	//		TakeDamage(Damageable->GetDamage(), DamageEvent,nullptr, Enemy);
+	//	}
+	//}
 }
 
 void AAAPlayerPawn::OnHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	AAAProjectile * Projectile = Cast<AAAProjectile>(OtherActor);
-	if (Projectile)
+	//IADamageable * Damageable = Cast<IADamageable>(OtherActor);
+	//if (Damageable)
+	//{
+	//	AAAEnemyPawn * Enemy = Cast<AAAEnemyPawn>(OtherActor->GetInstigator());
+	//	if (Enemy)
+	//	{
+	//		FDamageEvent DamageEvent;
+	//		TakeDamage(Damageable->GetDamage(), DamageEvent, nullptr, Enemy);
+	//	}
+	//}
+}
+
+float AAAPlayerPawn::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	AAAEnemyPawn * Enemy = Cast<AAAEnemyPawn>(DamageCauser);
+	if (Enemy)
 	{
-		if (Projectile->GetInstigator() != this)
-		{
-			FDamageEvent DamageEvent;
-			TakeDamage(Projectile->GetDamage(), DamageEvent, nullptr, Projectile->GetOwner());
-		}
+		AAAPawn::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	}
+	return 0.f;
+}
+
+FVector AAAPlayerPawn::GetFireDirection()
+{
+	return FireDirection;
 }
 
 

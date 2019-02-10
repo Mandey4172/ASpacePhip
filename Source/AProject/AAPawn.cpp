@@ -1,23 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AAPawn.h"
-
-#include "AThrowSkill.h"
-
-
+#include "Skills/AThrowSkill.h"
+#include "PaperFlipbookComponent.h"
 
 // Sets default values
 AAAPawn::AAAPawn()
 {
-	BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("SphereComponent"));
+	BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	BoxCollisionComponent->InitBoxExtent(FVector(50.f, 50.f, 50.f));
 	BoxCollisionComponent->OnComponentHit.AddDynamic(this, &AAAPawn::OnHit);
-	//BoxCollisionComponent->BodyInstance.SetCollisionProfileName();
+	BoxCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AAAPawn::BeginOverlap);
 	RootComponent = BoxCollisionComponent;
-
-	ActorMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShipMesh"));
-	ActorMeshComponent->AttachTo(GetRootComponent());
-	//ActorMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AAAPawn::BeginOverlap);
+	
+	ActorSpriteComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("SpriteComponent"));
+	ActorSpriteComponent->AttachTo(GetRootComponent());
 	
 	BaseSkillClass = AAThrowSkill::StaticClass();
 
@@ -26,15 +23,15 @@ AAAPawn::AAAPawn()
 	//
 	bCanFire = true;
 	//
-	Health = 5.f;
+	MaxHealth = 5.f;
+	//
+	Health = MaxHealth;
 	// Movement
 	MoveSpeed = 1000.0f;
 	//
 	SkillRate = 1.f;
 	//
 	Damage = 1.f;
-
-	FireDirection = FVector::ZeroVector;
 }
 
 // Called when the game starts or when spawned
@@ -48,7 +45,7 @@ void AAAPawn::BeginPlay()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = this;
-		// spawn 
+		// Spawn 
 		BaseSkill = World->SpawnActor<AASkill>(BaseSkillClass, SpawnParams);
 	}
 }
@@ -61,23 +58,21 @@ void AAAPawn::Tick(float DeltaTime)
 
 float AAAPawn::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Take damage!"));
 	Health -= DamageAmount;
 	if (Health <= 0.0f)
 	{
 		Destroy();
+		return 0.0f;
 	}
-	return 0.0f;
+	return DamageAmount;
 }
 
 void AAAPawn::BeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overleap!"));
 }
 
 void AAAPawn::OnHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	int x = 0;
 }
 
 void AAAPawn::UseBaseSkill()
@@ -103,9 +98,14 @@ float AAAPawn::GetSkillRate()
 	return SkillRate;
 }
 
+float AAAPawn::GetHealth()
+{
+	return Health;
+}
+
 FVector AAAPawn::GetFireDirection()
 {
-	return FireDirection;
+	return FVector::ZeroVector;
 }
 
 

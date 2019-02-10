@@ -4,7 +4,7 @@
 
 #include "Core.h"
 #include "Engine.h"
-#include "ASkill.h"
+#include "Skills/ASkill.h"
 #include "GameFramework/Pawn.h"
 #include "AAPawn.generated.h"
 
@@ -30,12 +30,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-
 	/* Fire a shot in the specified direction */
 	UFUNCTION(BlueprintCallable)
 	void UseBaseSkill();
@@ -51,14 +45,17 @@ public:
 	float GetSkillRate();
 
 	UFUNCTION(BlueprintCallable)
-	FVector GetFireDirection();
+	float GetHealth();
+
+	UFUNCTION(BlueprintCallable)
+	virtual FVector GetFireDirection();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AASkill> BaseSkillClass;
 
-	/* The mesh component */
+	/* Sprite comonent */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-	class UStaticMeshComponent* ActorMeshComponent;
+	class UPaperFlipbookComponent* ActorSpriteComponent;
 
 	/* Collision component */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
@@ -66,8 +63,11 @@ public:
 
 protected:
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere)
-	float Health;
+	float MaxHealth;
 
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed;
@@ -78,10 +78,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float Damage;
 
-	FVector FireDirection;
-
 private:
 	
+	float Health;
+
 	bool bCanFire;
 
 	class AASkill * BaseSkill;

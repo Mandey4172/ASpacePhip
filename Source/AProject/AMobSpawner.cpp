@@ -67,7 +67,6 @@ UBoxComponent * AAMobSpawner::GetSpawnArea()
 
 FVector AAMobSpawner::GetRandomPointInVolume()
 {
-
 	return UKismetMathLibrary::RandomPointInBoundingBox(SpawnArea->Bounds.Origin, SpawnArea->Bounds.BoxExtent);
 }
 
